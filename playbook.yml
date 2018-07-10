@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  gather_facts: no
+
+  roles:
+    - vms
+
+- name: install collectd
+  hosts: deployment
+  roles:
+    - collectd

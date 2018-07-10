@@ -1,0 +1,11 @@
+central: 192.168.36.62
+node_name: collectd
+os_flavor: m1.medium
+os_image: CentOS-x86_64-GenericCloud-1708
+os_security_groups: 'monitoring'
+ips:
+  - 192.168.36.63
+  - 192.168.36.64
+  - 192.168.36.65
+  - 192.168.36.66
+  - 192.168.36.67

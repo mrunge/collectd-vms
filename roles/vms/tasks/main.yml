@@ -1,0 +1,47 @@
+---
+
+- name: launch vms
+  os_server:
+    state: present
+    auth:
+      auth_url: "{{ lookup('env', 'OS_AUTH_URL') }}"
+      username: "{{ lookup('env','OS_USERNAME') }}"
+      password: "{{ lookup('env','OS_PASSWORD') }}"
+      project_name: "{{ lookup('env','OS_TENANT_NAME') }}"
+    name: '{{ node_name }}-{{ item }}'
+    image: '{{ os_image }}'
+    flavor: '{{ os_flavor }}'
+    key_name: "{{ lookup('env','OS_USERNAME') }}"
+    terminate_volume: 'true'
+    floating_ips:
+      - '{{ item }}'
+    security_groups: '{{ os_security_groups }}'
+  with_items:
+  - '{{ ips }}'
+
+- name: add node to inventory
+  add_host:
+    hostname: '{{ node_name }}-{{ item }}'
+    groups: deployment
+    ansible_host: '{{ item }}'
+    ansible_user: 'centos'
+    ansible_become: True
+  with_items:
+    - '{{ ips }}'
+
+- name: remove node from ssh
+  known_hosts:
+    state: absent
+    name: '{{ item }}'
+  with_items:
+    - '{{ ips }}'
+
+- name: wait until ssh is up
+  wait_for:
+    host: '{{ item }}'
+    timeout: 300
+    port: 22
+    delay: 20
+  with_items:
+    - '{{ ips }}'
+
